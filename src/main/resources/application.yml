@@ -1,0 +1,17 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: food_delivery
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/food_delivery?serverTimezone=UTC&useTimezone=true
+    username: root
+    password: 181615
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID

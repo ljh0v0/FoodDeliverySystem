@@ -1,0 +1,289 @@
+use food_delivery;
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for address_book
+-- ----------------------------
+DROP TABLE IF EXISTS `address_book`;
+CREATE TABLE `address_book` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id for addresses',
+  `user_id` bigint(20) NOT NULL COMMENT 'user id',
+  `consignee` varchar(50) NOT NULL COMMENT 'consignee name',
+  `gender` tinyint(4) NOT NULL COMMENT 'gender F M',
+  `phone_number` varchar(11) NOT NULL COMMENT 'phone_number',
+  `country` varchar(32) DEFAULT NULL COMMENT 'country',
+  `province` varchar(32) DEFAULT NULL COMMENT 'province/state',
+  `city` varchar(32) DEFAULT NULL COMMENT 'city/town',
+  `street` varchar(200) DEFAULT NULL COMMENT 'street line',
+  `post_code` varchar(12) DEFAULT NULL COMMENT 'post/zip code',
+  `address_type` varchar(100) DEFAULT NULL COMMENT 'address_type',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'default 0 no 1 yes',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  `is_deleted` int(11) NOT NULL DEFAULT '0' COMMENT 'is deleted',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB COMMENT='address book';
+
+-- ----------------------------
+-- Records of address_book
+-- ----------------------------
+INSERT INTO `address_book` VALUES ('0001', '1111', 'Eve', 'F', '1234567890', 'Canada', 'BC', 'Vancouver', '1234 Main mall', 'V1T1Z1', 'home', '1', '2021-07-20 17:22:12', '2021-07-20 17:26:33', '1', '1', '0');
+INSERT INTO `address_book` VALUES ('0002', '2222', 'Villanelle', 'F', '1234567891', 'USA', 'CA', 'Los Angeles', '10th Avenue', '123456', 'company', '1', '2022-06-20 17:22:12', '2022-06-20 17:26:33', '1', '1', '0');
+
+-- ----------------------------
+-- Table structure for category
+-- ----------------------------
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id for category',
+  `type` int(11) DEFAULT NULL COMMENT 'type   1 dish type  2 combo type',
+  `name` varchar(64) NOT NULL COMMENT 'type name',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT 'order',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_category_name` (`name`)
+) ENGINE=InnoDB COMMENT='dish and combo type';
+
+-- ----------------------------
+-- Records of category
+-- ----------------------------
+INSERT INTO `category` VALUES ('0001', '1', 'Burgers', '1', '2021-05-27 09:16:58', '2021-07-15 20:25:23', '1', '1');
+INSERT INTO `category` VALUES ('0002', '1', 'Pizzas', '2', '2021-05-27 09:17:07', '2021-06-02 14:27:22', '1', '1');
+INSERT INTO `category` VALUES ('0003', '1', 'Sides', '3', '2021-05-27 09:17:28', '2021-07-09 14:37:13', '1', '1');
+INSERT INTO `category` VALUES ('0004', '1', 'Beverages', '4', '2021-07-09 11:36:15', '2021-07-09 14:39:15', '1', '1');
+INSERT INTO `category` VALUES ('0005', '1', 'Desserts', '5', '2021-07-09 11:40:30', '2021-07-09 14:43:45', '1', '1');
+INSERT INTO `category` VALUES ('0006', '2', 'Kid Meal', '6', '2021-07-09 14:30:07', '2021-07-09 14:39:19', '1', '1');
+INSERT INTO `category` VALUES ('0007', '2', 'Today Special', '7', '2021-07-09 14:35:02', '2021-07-09 14:39:05', '1', '1');
+
+-- ----------------------------
+-- Table structure for dish
+-- ----------------------------
+DROP TABLE IF EXISTS `menu`;
+CREATE TABLE `menu` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `name` varchar(64) NOT NULL COMMENT 'name',
+  `category_id` bigint(20) NOT NULL COMMENT 'type id',
+  `price` decimal(10,2) DEFAULT NULL COMMENT 'price',
+  `code` varchar(32) DEFAULT NULL COMMENT 'code',
+  `image` varchar(200) NOT NULL COMMENT 'image',
+  `description` varchar(400) DEFAULT NULL COMMENT 'description',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '0 sold out 1 in stock',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT 'oder',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  `is_deleted` int(11) NOT NULL DEFAULT '0' COMMENT 'is deleted',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_dish_name` (`name`)
+) ENGINE=InnoDB COMMENT='menu';
+
+-- ----------------------------
+-- Records of dish
+-- ----------------------------
+INSERT INTO `menu` VALUES ('0001', 'Single Cheeseburger', '0001', '13.20', 'm0001', 'single_cheeseburger.jpg', 'One Hand-pressed beef patty. all burgers come with lettuce, tomato, pickle, onion and crush sauce', '1', '0', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0002', 'Double Cheeseburger', '0001', '17.40', 'm0002', 'double_cheeseburger.jpg', 'Two Hand-pressed beef patties. all burgers come with lettuce, tomato, pickle, onion and crush sauce', '1', '1', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0003', 'Vegan Cheeseburger', '0001', '15.99', 'm0003', 'vegan_cheeseburger.jpg', 'One Hand-pressed vqgan patty. all burgers come with lettuce, tomato, pickle, onion and crush sauce', '1', '2', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0004', 'Pepperoni', '0002', '15.99', 'm0004',  'pepperoni.jpg', 'Tomato sauce, mozzarella, pepperoni', '1', '4', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0005', 'Hawaiian', '0002', '15.99', 'm0005', 'hawaiian.jpg', 'Tomato sauce, mozzarella, ham, pineapple', '1', '5', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0006', 'Creamy Meat', '0002', '15.99', 'm0006', 'creamy_meat.jpg', 'Creamy white garlic sauce, mozzarella, bacon, sausage, and cheddar', '0', '6', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0007', 'Fries', '0003', '4.99', 'm0007', 'fries.jpg', 'Box of French fries', '1', '7', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0008', 'Poutine', '0003', '6.99', 'm0008', 'poutine.jpg', 'Box of French fries topped with cheese curds and gravy', '1', '8', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('0009', 'Coke', '0004', '2.50', 'm0009', 'code.jpg', '', '1', '9', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('00010', 'Pepsi', '0004', '2.50', 'm0010', 'peppsi.jpg', '', '1', '10', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+INSERT INTO `menu` VALUES ('00011', 'Brownie', '0003', '8.99', 'm0011', 'brownie.jpg', 'Chocolate brownie', '1', '11', '2021-05-27 09:38:43', '2021-05-27 09:38:43', '1', '1', '0');
+
+
+-- ----------------------------
+-- Table structure for dish_flavor
+-- ----------------------------
+DROP TABLE IF EXISTS `requirements`;
+CREATE TABLE `dish_flavor` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `menu_id` bigint(20) NOT NULL COMMENT 'menu id',
+  `name` varchar(64) NOT NULL COMMENT 'name',
+  `value` varchar(500) DEFAULT NULL COMMENT 'list',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  `is_deleted` int(11) NOT NULL DEFAULT '0' COMMENT 'is deleted',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB COMMENT='requirements';
+
+-- ----------------------------
+-- Records of dish_flavor
+-- ----------------------------
+INSERT INTO `dish_flavor` VALUES ('0001', '0001', 'No Mods Burgers', '[\"No Tomato\",\"No Onion\",\"No Lettuce\",\"No Pickles\",\"No Sauce\",\"No Cheese\"]', '2021-05-27 09:37:27', '2021-05-27 09:37:27', '1', '1', '0');
+INSERT INTO `dish_flavor` VALUES ('0001', '0002', 'No Mods Burgers', '[\"No Tomato\",\"No Onion\",\"No Lettuce\",\"No Pickles\",\"No Sauce\",\"No Cheese\"]', '2021-05-27 09:37:27', '2021-05-27 09:37:27', '1', '1', '0');
+INSERT INTO `dish_flavor` VALUES ('0001', '0003', 'No Mods Burgers', '[\"No Tomato\",\"No Onion\",\"No Lettuce\",\"No Pickles\",\"No Sauce\",\"No Cheese\"]', '2021-05-27 09:37:27', '2021-05-27 09:37:27', '1', '1', '0');
+
+-- ----------------------------
+-- Table structure for employee
+-- ----------------------------
+DROP TABLE IF EXISTS `employee`;
+CREATE TABLE `employee` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `name` varchar(32) NOT NULL COMMENT 'name',
+  `username` varchar(32) NOT NULL COMMENT 'user name',
+  `password` varchar(64) NOT NULL COMMENT 'pass word',
+  `phone_number` varchar(11) NOT NULL COMMENT 'phone_number',
+  `gender` varchar(2) NOT NULL COMMENT 'gender',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT 'state 0:disable，1:enable',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_username` (`username`)
+) ENGINE=InnoDB COMMENT='employee';
+
+-- ----------------------------
+-- Records of employee
+-- ----------------------------
+INSERT INTO `employee` VALUES ('1', 'johannah', 'admin001', '123456', '1111112222', 'F', '1', '2021-05-06 17:20:07', '2021-05-10 02:24:09', '1', '1');
+
+-- ----------------------------
+-- Table structure for orders
+-- ----------------------------
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `number` varchar(50) DEFAULT NULL COMMENT 'order number',
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT 'order state 1 pending payment, 2 processing, 3 delivered, 4 arrived, 5 canceled',
+  `user_id` bigint(20) NOT NULL COMMENT 'order placing user',
+  `address_book_id` bigint(20) NOT NULL COMMENT 'address book id',
+  `order_time` datetime NOT NULL COMMENT 'order placing time',
+  `checkout_time` datetime NOT NULL COMMENT 'checkout time',
+  `pay_method` int(11) NOT NULL DEFAULT '1' COMMENT 'payment 1 credit, 2 google pay',
+  `amount` decimal(10,2) NOT NULL COMMENT 'total  due',
+  `remark` varchar(100) DEFAULT NULL COMMENT 'remark',
+  `phone_number` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `user_name` varchar(255)  DEFAULT NULL,
+  `consignee` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB COMMENT='orders';
+
+-- ----------------------------
+-- Records of orders
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for order_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `order_detail`;
+CREATE TABLE `order_detail` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `name` varchar(50) DEFAULT NULL COMMENT 'name',
+  `image` varchar(100) DEFAULT NULL COMMENT 'image',
+  `order_id` bigint(20) NOT NULL COMMENT 'order id',
+  `dish_id` bigint(20) DEFAULT NULL COMMENT 'menu id',
+  `combo_id` bigint(20) DEFAULT NULL COMMENT 'combo id',
+  `requirements` varchar(50) DEFAULT NULL COMMENT 'requirements',
+  `number` int(11) NOT NULL DEFAULT '1' COMMENT 'number',
+  `amount` decimal(10,2) NOT NULL COMMENT 'amount',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB COMMENT='oder details';
+
+-- ----------------------------
+-- Records of order_detail
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for combo
+-- ----------------------------
+DROP TABLE IF EXISTS `combo`;
+CREATE TABLE `combo` (
+  `id` bigint(20) NOT NULL ,
+  `category_id` bigint(20) NOT NULL COMMENT 'category id',
+  `name` varchar(64) NOT NULL COMMENT 'combo name',
+  `price` decimal(10,2) NOT NULL COMMENT 'combo price',
+  `status` int(11) DEFAULT NULL COMMENT 'state 0:disable 1:enable',
+  `code` varchar(32) DEFAULT NULL COMMENT 'code',
+  `description` varchar(512) DEFAULT NULL COMMENT 'description',
+  `image` varchar(255) DEFAULT NULL COMMENT 'image',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  `is_deleted` int(11) NOT NULL DEFAULT '0' COMMENT 'is deleted',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `idx_setmeal_name` (`name`)
+) ENGINE=InnoDB COMMENT='combo';
+
+-- ----------------------------
+-- Records of combo
+-- ----------------------------
+INSERT INTO `combo` VALUES ('0001', '0006', 'Kid meal A', '17.00', '1', 'c0001', 'Sigle cheese burger, fries, coke.', 'kid_a.jpg', '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1', '1', '0');
+
+-- ----------------------------
+-- Table structure for combo items
+-- ----------------------------
+DROP TABLE IF EXISTS `combo_items`;
+CREATE TABLE `combo_items` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `combo_id` varchar(32) NOT NULL COMMENT 'combo id ',
+  `dish_id` varchar(32) NOT NULL COMMENT 'items id',
+  `name` varchar(32) DEFAULT NULL COMMENT 'items name',
+  `price` decimal(10,2) DEFAULT NULL COMMENT 'items original price',
+  `number` int(11) NOT NULL COMMENT 'number',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT 'oder',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` datetime NOT NULL COMMENT 'update time',
+  `create_user` bigint(20) NOT NULL COMMENT 'create user',
+  `update_user` bigint(20) NOT NULL COMMENT 'update user',
+  `is_deleted` int(11) NOT NULL DEFAULT '0' COMMENT 'id deleted',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB COMMENT='combo items';
+
+-- ----------------------------
+-- Records of combo items
+-- ----------------------------
+INSERT INTO `combo_items` VALUES ('0001', '0001', '0001', 'Single Cheeseburger', '13.20', '1', '0', '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1', '1', '0');
+INSERT INTO `combo_items` VALUES ('0002', '0001', '0007', 'Fries', '4.99', '1', '0', '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1', '1', '0');
+INSERT INTO `combo_items` VALUES ('0003', '0001', '0009', 'Coke', '2.50', '1', '0', '2021-07-15 15:52:55', '2021-07-15 15:52:55', '1', '1', '0');
+
+-- ----------------------------
+-- Table structure for shopping_cart
+-- ----------------------------
+DROP TABLE IF EXISTS `shopping_cart`;
+CREATE TABLE `shopping_cart` (
+  `id` bigint(20) NOT NULL COMMENT 'unique id',
+  `name` varchar(50) DEFAULT NULL COMMENT 'name',
+  `image` varchar(100) DEFAULT NULL COMMENT 'images',
+  `user_id` bigint(20) NOT NULL COMMENT 'user id',
+  `dish_id` bigint(20) DEFAULT NULL COMMENT 'menu id',
+  `setmeal_id` bigint(20) DEFAULT NULL COMMENT 'combo id',
+  `requirements` varchar(50) DEFAULT NULL COMMENT 'requirements',
+  `number` int(11) NOT NULL DEFAULT '1' COMMENT 'number',
+  `amount` decimal(10,2) NOT NULL COMMENT 'amount',
+  `create_time` datetime DEFAULT NULL COMMENT 'create time',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB;
+
+-- ----------------------------
+-- Records of shopping_cart
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL COMMENT 'user id',
+  `name` varchar(50) DEFAULT NULL COMMENT 'name',
+  `phone_number` varchar(100) NOT NULL COMMENT 'phone number',
+  `gender` varchar(2) DEFAULT NULL COMMENT 'gender',
+  `avatar` varchar(500) DEFAULT NULL COMMENT 'avatar',
+  `status` int(11) DEFAULT '0' COMMENT 'state 0:disable, 1:enable',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB COMMENT='user info';
+
+INSERT INTO `user` VALUES ('0001', 'eve', '1234567890', 'F', '', '1');
+INSERT INTO `user` VALUES ('0002', 'Villanelle', '1234567891', 'F', '', '1');
