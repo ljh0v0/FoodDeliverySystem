@@ -1,2 +1,2 @@
 # FoodDeliverySystem
-A food delivery system using spring cloud
+A food delivery system using spring boot
