@@ -1,7 +1,7 @@
 package com.myfood.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myfood.common.R;
 import com.myfood.entity.Employee;
 import com.myfood.service.EmployeeService;
@@ -11,7 +11,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -51,8 +51,54 @@ public class EmployController {
         return R.success("logout success");
     }
 
-    @GetMapping("/test")
-    public void test(){
-        log.info("test");
+    @PostMapping
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
+        // set default password
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        // set create time
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        // set create user
+        Long userID = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateUser(userID);
+        employee.setUpdateUser(userID);
+
+        // save new employee
+        employeeService.save(employee);
+
+        return R.success("Add new employee success");
+    }
+
+    @GetMapping("/page")
+    public R<Page> page(int page, int perPage, String name){
+        Page pageInfo = new Page(page, perPage);
+
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(name!=null, Employee::getName, name);
+        queryWrapper.orderByDesc(Employee::getUpdateTime);
+
+        employeeService.page(pageInfo, queryWrapper);
+
+        return R.success(pageInfo);
+    }
+
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
+        employee.setUpdateTime(LocalDateTime.now());
+        Long userID = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateUser(userID);
+        employeeService.updateById(employee);
+        return R.success("Update employee info success");
+    }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id){
+        Employee emp = employeeService.getById(id);
+        if (emp != null){
+            return R.success(emp);
+        }else {
+            return R.error("No matching employee");
+        }
+
     }
 }
