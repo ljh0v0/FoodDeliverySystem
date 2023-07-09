@@ -1,31 +1,30 @@
 package com.myfood.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Employee implements Serializable {
+public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
+    //type 1 dish category 2 combo category
+    private Integer type;
+
     private String name;
 
-    private String username;
+    private Integer sort;
 
-    private String password;
-
-    private String phoneNumber;
-
-    private String gender;
-
-    private Integer status;
-
-    @TableField(fill= FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
@@ -36,5 +35,7 @@ public class Employee implements Serializable {
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
+
+    //private Integer isDeleted;
 
 }

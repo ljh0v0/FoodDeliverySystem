@@ -55,13 +55,6 @@ public class EmployController {
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
         // set default password
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        // set create time
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        // set create user
-        Long userID = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(userID);
-        employee.setUpdateUser(userID);
 
         // save new employee
         employeeService.save(employee);
@@ -70,8 +63,8 @@ public class EmployController {
     }
 
     @GetMapping("/page")
-    public R<Page> page(int page, int perPage, String name){
-        Page pageInfo = new Page(page, perPage);
+    public R<Page> page(int page, int pageSize, String name){
+        Page pageInfo = new Page(page, pageSize);
 
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(name!=null, Employee::getName, name);
@@ -84,9 +77,6 @@ public class EmployController {
 
     @PutMapping
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
-        employee.setUpdateTime(LocalDateTime.now());
-        Long userID = (Long) request.getSession().getAttribute("employee");
-        employee.setUpdateUser(userID);
         employeeService.updateById(employee);
         return R.success("Update employee info success");
     }
