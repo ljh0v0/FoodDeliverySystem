@@ -6,8 +6,11 @@ import com.myfood.common.R;
 import com.myfood.entity.Category;
 import com.myfood.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -17,13 +20,13 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping
-    public R<String> save(@RequestBody Category category){
+    public R<String> save(@RequestBody Category category) {
         categoryService.save(category);
         return R.success("Add a new category successfully");
     }
 
     @GetMapping("/page")
-    public R<Page> page(int page, int pageSize){
+    public R<Page> page(int page, int pageSize) {
         Page<Category> pageInfo = new Page<>(page, pageSize);
 
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper();
@@ -35,14 +38,24 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public R<String> delete(@PathVariable Long id){
+    public R<String> delete(@PathVariable Long id) {
         categoryService.remove(id);
         return R.success("Delete category successfully");
     }
 
     @PutMapping
-    public R<String> update(@RequestBody Category category){
+    public R<String> update(@RequestBody Category category) {
         categoryService.updateById(category);
         return R.success("Update category info successfully");
+    }
+
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category){
+        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(category.getType() != null, Category::getType, category.getType());
+        queryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+
+        List<Category> list = categoryService.list(queryWrapper);
+        return R.success(list);
     }
 }

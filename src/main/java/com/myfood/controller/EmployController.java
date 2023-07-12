@@ -21,7 +21,7 @@ public class EmployController {
     private EmployeeService employeeService;
 
     @PostMapping("/login")
-    public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
+    public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
         String password = employee.getPassword();
         password = DigestUtils.md5DigestAsHex(password.getBytes());
 
@@ -29,15 +29,15 @@ public class EmployController {
         queryWrapper.eq(Employee::getUsername, employee.getUsername());
         Employee emp = employeeService.getOne(queryWrapper);
 
-        if (emp == null){
+        if (emp == null) {
             return R.error("User does not exist");
         }
 
-        if (!emp.getPassword().equals(password)){
+        if (!emp.getPassword().equals(password)) {
             return R.error("Wrong username or password");
         }
 
-        if (emp.getStatus() != 1){
+        if (emp.getStatus() != 1) {
             return R.error("User has been disabled");
         }
 
@@ -46,13 +46,13 @@ public class EmployController {
     }
 
     @PostMapping("/logout")
-    public R<String> logout(HttpServletRequest request){
+    public R<String> logout(HttpServletRequest request) {
         request.getSession().removeAttribute("employee");
         return R.success("logout success");
     }
 
     @PostMapping
-    public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         // set default password
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 
@@ -63,11 +63,11 @@ public class EmployController {
     }
 
     @GetMapping("/page")
-    public R<Page> page(int page, int pageSize, String name){
+    public R<Page> page(int page, int pageSize, String name) {
         Page pageInfo = new Page(page, pageSize);
 
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(name!=null, Employee::getName, name);
+        queryWrapper.like(name != null, Employee::getName, name);
         queryWrapper.orderByDesc(Employee::getUpdateTime);
 
         employeeService.page(pageInfo, queryWrapper);
@@ -76,17 +76,17 @@ public class EmployController {
     }
 
     @PutMapping
-    public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         employeeService.updateById(employee);
         return R.success("Update employee info success");
     }
 
     @GetMapping("/{id}")
-    public R<Employee> getById(@PathVariable Long id){
+    public R<Employee> getById(@PathVariable Long id) {
         Employee emp = employeeService.getById(id);
-        if (emp != null){
+        if (emp != null) {
             return R.success(emp);
-        }else {
+        } else {
             return R.error("No matching employee");
         }
 
