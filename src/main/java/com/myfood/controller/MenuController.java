@@ -75,4 +75,16 @@ public class MenuController {
         menuService.updateWithRequirements(menuDto);
         return R.success("Update the menu successfully");
     }
+
+    @GetMapping("/list")
+    public R<List<Menu>> List(Menu menu){
+        LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(menu.getCategoryId()!=null, Menu::getCategoryId, menu.getCategoryId());
+        queryWrapper.eq(Menu::getStatus, 1);
+        queryWrapper.orderByAsc(Menu::getSort).orderByDesc(Menu::getUpdateTime);
+
+        List<Menu> list = menuService.list(queryWrapper);
+
+        return R.success(list);
+    }
 }
