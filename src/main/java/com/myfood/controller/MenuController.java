@@ -6,6 +6,7 @@ import com.myfood.common.R;
 import com.myfood.dto.MenuDto;
 import com.myfood.entity.Category;
 import com.myfood.entity.Menu;
+import com.myfood.entity.Requirements;
 import com.myfood.service.CategoryService;
 import com.myfood.service.MenuService;
 import com.myfood.service.RequirementsService;
@@ -54,8 +55,12 @@ public class MenuController {
             BeanUtils.copyProperties(item, menuDto);
             Long categoryId = item.getCategoryId();
             Category category = categoryService.getById(categoryId);
-            String categoryName = category.getName();
-            menuDto.setCategoryName(categoryName);
+
+            if (category != null){
+                String categoryName = category.getName();
+                menuDto.setCategoryName(categoryName);
+            }
+
             return menuDto;
         }).collect(Collectors.toList());
 
@@ -76,15 +81,47 @@ public class MenuController {
         return R.success("Update the menu successfully");
     }
 
+//    @GetMapping("/list")
+//    public R<List<Menu>> List(Menu menu){
+//        LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(menu.getCategoryId()!=null, Menu::getCategoryId, menu.getCategoryId());
+//        queryWrapper.eq(Menu::getStatus, 1);
+//        queryWrapper.orderByAsc(Menu::getSort).orderByDesc(Menu::getUpdateTime);
+//
+//        List<Menu> list = menuService.list(queryWrapper);
+//
+//        return R.success(list);
+//    }
+
     @GetMapping("/list")
-    public R<List<Menu>> List(Menu menu){
+    public R<List<MenuDto>> List(Menu menu){
         LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(menu.getCategoryId()!=null, Menu::getCategoryId, menu.getCategoryId());
         queryWrapper.eq(Menu::getStatus, 1);
         queryWrapper.orderByAsc(Menu::getSort).orderByDesc(Menu::getUpdateTime);
 
-        List<Menu> list = menuService.list(queryWrapper);
+        List<Menu> menuList = menuService.list(queryWrapper);
 
-        return R.success(list);
+        List<MenuDto> menuDtoList = menuList.stream().map((item) ->{
+            MenuDto menuDto = new MenuDto();
+            BeanUtils.copyProperties(item, menuDto);
+            Long categoryId = item.getCategoryId();
+            Category category = categoryService.getById(categoryId);
+
+            if (category != null){
+                String categoryName = category.getName();
+                menuDto.setCategoryName(categoryName);
+            }
+
+            Long menuId = item.getId();
+            LambdaQueryWrapper<Requirements> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(Requirements::getMenuId, menuId);
+            List<Requirements> requirements = requirementsService.list(lambdaQueryWrapper);
+            menuDto.setRequirements(requirements);
+
+            return menuDto;
+        }).collect(Collectors.toList());
+
+        return R.success(menuDtoList);
     }
 }

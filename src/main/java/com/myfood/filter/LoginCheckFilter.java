@@ -25,7 +25,9 @@ public class LoginCheckFilter implements Filter {
 
         String[] uris = new String[] {
                 "/employee/login",
-                "employee/logout"
+                "employee/logout",
+                "/user/send_msg",
+                "/user/login"
         };
 
         String requestURI = request.getRequestURI();
@@ -42,6 +44,16 @@ public class LoginCheckFilter implements Filter {
             Long empId = (Long) request.getSession().getAttribute("employee");
             BaseContext.setCurrentId(empId);
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        if(request.getSession().getAttribute("user") != null){
+            log.info("User has login");
+
+            Long userId = (Long) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
+
+            filterChain.doFilter(request,response);
             return;
         }
 
